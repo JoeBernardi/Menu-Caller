@@ -1,0 +1,7 @@
+module.exports = {
+  twilioKey: '',
+  twilioToken: '',
+  twilioNumber: '',
+  pathToCallManifest: '',
+  serverPath: ''
+}
