@@ -1,0 +1,8 @@
+module.exports = {
+  twilioKey: '', // the account SID Twilio assigned you
+  twilioToken: '', // the API token Twilio assigned you
+  twilioNumber: '', // the phone number Twilio assigned you
+  pathToCallManifest: '', // the full path to calls.xml, Twilio only accepts full URLs for some reason, and it has to accept GET requests.
+  serverPath: '', // the full path to the root of your project ("http://recordings.com")
+  callDirectory: '' // name of the subdirectory where you'll store your recordings ("call_logs")
+}
