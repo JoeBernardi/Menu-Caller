@@ -62,7 +62,7 @@ function handleFile (url, source, recordingId) {
     if(index+1 !== names.length) {
       callAndRecord(numbers[++index])
     } else {
-      console.log("🍻 🍻 🍻 D O N E 🍻 🍻 🍻")
+      console.log("🍻 🍻 🍻  D O N E 🍻 🍻 🍻")
     }
   })
 }
