@@ -35,7 +35,7 @@ function callAndRecord(numberToCall) {
 }
 
 function scheduleCalls() {
-  schedule.scheduleJob('43 1 * * *', function(){
+  schedule.scheduleJob('05 2 * * *', function(){
    Object.keys(numbers).map(function(number, index){
      let delayTime = threeMinutes*index;
      return setTimeout(callAndRecord,delayTime,number)

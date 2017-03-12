@@ -49,7 +49,7 @@ app.post('/process_call/:numberCalled', function (req, res) {
       if(calls.deleteRecording(data.RecordingSid)) {
         downloadLog.succeed(`Got ${source}/${downloadOpts.filename} and deleted original`)
       } else {
-        downloadLog.succeed(`Got ${source}/${downloadOpts.filename} but failed to delete original`)
+        downloadLog.fail(`Got ${source}/${downloadOpts.filename} but failed to delete original`)
       }
   })
 })
