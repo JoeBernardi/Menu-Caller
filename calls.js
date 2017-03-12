@@ -68,7 +68,7 @@ function handleFile (url, source, recordingId) {
 }
 
 function scheduleCalls() {
-  schedule.scheduleJob('26 7 * * *', function(){
+  schedule.scheduleJob('0 10 * * *', function(){
     console.log(`\n🆒  🆒  🆒   ${day}  🆒  🆒  🆒`);
     callAndRecord(numbers[0]);
   });
