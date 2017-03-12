@@ -1,11 +1,11 @@
 const twilio = require('twilio');
 const ora = require('ora');
 const schedule = require('node-schedule');
-const download = require('download-file');
 const dateTime = require('node-datetime');
 
 const numbersAndNames = require('./data/numbers')
 const keys = require('./data/keys');
+const utils = require('./utils')
 
 const client = new twilio.RestClient(keys.twilioKey, keys.twilioToken);
 const threeMinutes = 180000; // in ms
@@ -43,44 +43,44 @@ function callAndRecord(numberToCall) {
 
 function handleFile (url, source, recordingId) {
 
-    callLog.succeed(`Finished with the call to ${source}.`)
+  callLog.succeed(`Finished with the call to ${source}.`)
 
-    const downloadLog = ora({
-      'text': `Downloading recording of call to ${source}.`,
-      'type': 'dots10',
-      'color': 'magenta',
-    }).start();
+  const downloadLog = ora({
+    'text': `Downloading recording of call to ${source}.`,
+    'type': 'dots10',
+    'color': 'magenta',
+  }).start();
 
-    const downloadOpts = {
-      directory: `./${keys.callDirectory}/${source}`,
-      filename: `${day}.mp3`
+  const fileTag = `${source}/${day}.mp3`
+  const filePath = `./${keys.callDirectory}/${fileTag}`
+  let index = names.indexOf(source);
+
+  utils.downloadRecording(url, filePath)
+  .then((val) => downloadLog.succeed(`Downloaded recording to ${fileTag}.`),
+        (error) => downloadLog.fail(`Could not download recording: ${error}.`))
+  .then(() => {
+    if(index+1 !== names.length) {
+      callAndRecord(numbers[++index])
+    } else {
+      console.log("🍻 🍻 🍻 D O N E 🍻 🍻 🍻")
     }
-    let index = names.indexOf(source);
-    download(url, downloadOpts, function(err){
-        if (err) {
-          downloadLog.fail(`ERROR: ${err} when trying to access ${url}.`);
-        }
-
-        deleteRecording(recordingId)
-          .then((val) => {
-            downloadLog.succeed(`Got ${source}/${downloadOpts.filename} and deleted original.`)
-          },
-          (error) => {
-            downloadLog.fail(`Got ${source}/${downloadOpts.filename} but failed to delete original: ${error}.`)
-          }).then(() => index !== names.length ? callAndRecord(numbers[++index]) : console.log("🍻 🍻 🍻 D O N E 🍻 🍻 🍻") )
-    })
+  })
 }
 
 function scheduleCalls() {
-  schedule.scheduleJob('31 4 * * *', function(){
+  schedule.scheduleJob('26 7 * * *', function(){
     console.log(`\n🆒  🆒  🆒   ${day}  🆒  🆒  🆒`);
     callAndRecord(numbers[0]);
   });
+
+  schedule.scheduleJob('0 5 * * *', function() {
+    deleteAllRecordings();
+  })
 }
 
 function deleteRecording(id) {
   return new Promise((resolve, reject) => {
-    client.recordings(id).delete(function(err, data) {
+    client.recordings(id).delete(function(err) {
       if (err) {
         reject(err)
       } else {
@@ -93,16 +93,9 @@ function deleteRecording(id) {
 function deleteAllRecordings() {
   client.recordings.list(function(err, data) {
       data.recordings.forEach(function(recording) {
-
-        const deleteLog = ora({
-          'text': `Deleting file with ID ${recording.sid}`,
-          'type': 'dots10',
-          'color': 'magenta',
-        }).start();
-
         deleteRecording(recording.sid)
-          .then((val) => deleteLog.succeed(`Deleted recording with ID ${val}.`),
-                (error) => deleteLog.fail(`Could not delete recording: ${error}.`))
+        .then((val) => console.log(`✌️  ✌️  ✌️  Deleted recording with ID ${val}. ✌️  ✌️  ✌️`),
+              (error) => console.log(`🤷 🤷 🤷  Could not delete recording: ${error}. 🤷 🤷 🤷`))
       });
   });
 }
