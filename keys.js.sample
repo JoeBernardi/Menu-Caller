@@ -1,7 +1,0 @@
-module.exports = {
-  twilioKey: '', // twilio api key
-  twilioToken: '', // twilio api token
-  twilioNumber: '', // the number twilio provided for you
-  pathToCallManifest: '', // the public path to call.xml. twilio only accepts absolute URLs for some reason
-  serverPath: '' // the path to the base directory of your project
-}
